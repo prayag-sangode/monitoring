@@ -1,0 +1,50 @@
+ingress:
+  enabled: true
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+    kubernetes.io/ingress.class: nginx
+  path: /
+  pathType: Prefix
+  spec:
+    ingressClassName: nginx
+  hosts:
+    - grafana.load.dev.llmhub.t-systems.net
+  paths:
+    - path: /
+      pathType: Prefix
+      backend:
+        service:
+          name: grafana
+          port:
+            number: 80
+  tls:
+    - secretName: grafana-load-dev-tls
+      hosts:
+        - grafana.load.dev.llmhub.t-systems.net
+
+persistence:
+  type: pvc
+  enabled: true
+  accessModes:
+    - ReadWriteOnce
+  size: 200Gi
+  finalizers:
+    - kubernetes.io/pvc-protection
+  extraPvcLabels: {}
+  disableWarning: false
+  storageClassName: "csi-disk"
+
+  inMemory:
+    enabled: false
+
+  lookupVolumeName: true
+
+adminUser: admin
+#adminPassword: ""
+
+admin:
+  existingSecret: ""
+  userKey: admin-user
+  passwordKey: admin-password
+
