@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-exporter-config
+  namespace: monitoring
+data:
+  queries.yaml: |
+    custom_queries:
+      - name: "pg_stat_database"
+        query: "SELECT datname, numbackends, xact_commit, xact_rollback, blks_read, blks_hit FROM pg_stat_database;"
+        metrics:
+          - name: pg_stat_database_backends
+            help: "Number of backends connected to the database"
+            type: gauge
+            labels: [datname]
+          - name: pg_stat_database_commits
+            help: "Number of committed transactions"
+            type: counter
+            labels: [datname]
+          - name: pg_stat_database_rollbacks
+            help: "Number of rolled-back transactions"
+            type: counter
+            labels: [datname]

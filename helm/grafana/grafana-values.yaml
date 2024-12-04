@@ -9,7 +9,7 @@ ingress:
   spec:
     ingressClassName: nginx
   hosts:
-    - grafana.load.dev.llmhub.t-systems.net
+    - grafana.example.com
   paths:
     - path: /
       pathType: Prefix
@@ -21,19 +21,20 @@ ingress:
   tls:
     - secretName: grafana-load-dev-tls
       hosts:
-        - grafana.load.dev.llmhub.t-systems.net
+        - grafana.example.com
 
 persistence:
   type: pvc
   enabled: true
   accessModes:
     - ReadWriteOnce
-  size: 200Gi
+  size: 20Gi
   finalizers:
     - kubernetes.io/pvc-protection
   extraPvcLabels: {}
   disableWarning: false
-  storageClassName: "csi-disk"
+  storageClassName: "standard"
+  #storageClassName: "csi-disk"
 
   inMemory:
     enabled: false

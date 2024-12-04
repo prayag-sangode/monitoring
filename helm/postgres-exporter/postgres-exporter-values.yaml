@@ -1,0 +1,64 @@
+
+replicaCount: 1
+
+image:
+  registry: quay.io
+  repository: prometheuscommunity/postgres-exporter
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+#service:
+#  type: ClusterIP
+#  port: 9187
+#  targetPort: 9187
+#  name: http
+
+config:
+  datasource:
+    host: "80.158.32.92"
+    user: "root"
+    password: "JgGbpfWLhiG9986qJu7FbuHhkoSSE6xW"
+    port: "5432"
+    database: "postgres"
+    sslmode: "disable"
+  disableCollectorDatabase: false
+  disableCollectorBgwriter: false
+  disableDefaultMetrics: false
+  disableSettingsMetrics: false
+
+  logLevel: "info"
+  logFormat: "logfmt"
+  extraArgs:
+    - "--extend.query-path=/etc/postgres_exporter/queries.yaml"
+
+extraVolumes:
+  - name: queries-config
+    configMap:
+      name: postgres-exporter-config
+      items:
+        - key: queries.yaml
+          path: queries.yaml
+
+extraVolumeMounts:
+  - name: queries-config
+    mountPath: /etc/postgres_exporter/queries.yaml
+    subPath: queries.yaml
+
+resources: {}
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+
+serviceAccount:
+  create: true
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+podLabels: {}
+
+annotations: {}

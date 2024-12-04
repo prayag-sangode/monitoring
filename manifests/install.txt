@@ -1,0 +1,47 @@
+kubectl create namespace monitoring
+
+kubectl apply -f prometheus-deployment.yaml
+kubectl apply -f prometheus-service.yaml
+kubectl apply -f prometheus-configmap.yaml
+
+kubectl apply -f grafana-deployment.yaml 
+
+kubectl apply -f postgres-secret.yaml
+kubectl apply -f postgres-pv-pvc.yaml
+kubectl apply -f postgres-deployment.yaml
+kubectl apply -f postgres-service.yaml
+
+kubectl apply -f postgres-exporter-configmap.yaml
+kubectl apply -f postgres-exporter-deployment.yaml
+
+kubectl apply -f prometheus-nodeexporter.yaml
+
+minikube addons enable metrics-server
+
+kubectl top nodes
+kubectl top pods
+
+kubectl create deployment nginx --image=nginx:latest --port=80
+kubectl expose deployment nginx --type=ClusterIP --port=80
+
+kubectl create deployment httpd --image=httpd:latest --port=80
+kubectl expose deployment httpd --type=ClusterIP --port=80
+
+kubectl create deployment caddy --image=caddy:latest --port=80
+kubectl expose deployment caddy --type=ClusterIP --port=80
+
+#kubectl port-forward svc/grafana 3000:80 --address 0.0.0.0 -n monitoring
+#kubectl port-forward svc/prometheus 9090:9090 -n monitoring --address 0.0.0.0
+
+#kubectl get nodes -o wide
+#kubectl run test-pod --image=ubuntu:latest --restart=Never -- /bin/sh -c "sleep infinity"
+#kubectl exec -it test-pod -- /bin/bash
+#curl 192.168.49.2:9100/metrics 
+#kubectl exec -it test-pod -- /bin/bash
+#curl postgres-exporter.monitoring.svc.cluster.local:9187/metrics
+#curl -k https://metrics-server.kube-system.svc.cluster.local/metrics
+
+
+#15055 - mem and cpu
+#1860 - nodeexporter full
+#455 and 9628 - postgres
