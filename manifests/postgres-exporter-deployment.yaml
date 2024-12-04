@@ -20,7 +20,7 @@ spec:
             - containerPort: 9187
           env:
             - name: DATA_SOURCE_NAME
-              value: "postgres://root:JgGbpfWLhiG9986qJu7FbuHhkoSSE6xW@80.158.32.92:5432/postgres?sslmode=disable"
+              value: "postgres://root:<replace-password>W@<replace-ip>:5432/postgres?sslmode=disable"
               #value: "postgres://postgres:pwadmin@postgres.monitoring.svc.cluster.local:5432/postgres?sslmode=disable"
           volumeMounts:
             - name: queries-config
