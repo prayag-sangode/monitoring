@@ -15,9 +15,9 @@ image:
 
 config:
   datasource:
-    host: "80.158.32.92"
+    host: "<my-ip>"
     user: "root"
-    password: "JgGbpfWLhiG9986qJu7FbuHhkoSSE6xW"
+    password: "<replace-me>"
     port: "5432"
     database: "postgres"
     sslmode: "disable"
