@@ -20,6 +20,7 @@ kubectl run test-pod --image=ubuntu:latest --restart=Never -- sleep infinity
 
 # test deployment
 kubectl create deployment test-deployment --image=ubuntu:latest -- /bin/bash -c "sleep infinity"
+ #inside pod - stress-ng --cpu 4 --timeout 3000s
 
 # restart
 kubectl rollout restart deployment/test-deployment
