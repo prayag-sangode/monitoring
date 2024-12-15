@@ -1,6 +1,4 @@
-Here is the `README.md` you requested for setting up Prometheus, Grafana, Alertmanager, and testing alerts:
 
-```markdown
 # Prometheus and Grafana Setup for Monitoring with Alerts
 
 This guide will help you set up Prometheus, Grafana, and Alertmanager using Helm, configure email alerts, and test pod restarts with `kubectl` and `stress-ng`.
@@ -130,6 +128,5 @@ Once testing is complete, you can clean up the resources:
 - The Grafana dashboard should be configured to display the metrics from Prometheus.
 - Alerts in Alertmanager will send notifications based on the conditions specified in `alerts.yml`.
 - Ensure your `alertmanagerconfig.yml` includes the correct SMTP configuration for sending emails.
-```
 
-This `README.md` provides clear instructions to set up the monitoring stack, configure email alerts, and test with Kubernetes pods. Let me know if you need any further modifications!
+
