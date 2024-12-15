@@ -121,6 +121,17 @@ Once testing is complete, you can clean up the resources:
   kubectl delete pod test-pod
   ```
 
+- Uninstall helm chart:
+
+```bash
+helm uninstall monitoring --namespace monitoring
+```
+
+- Delete namespace:
+```bash
+kubectl delete ns monitoring
+```
+
 ---
 
 ### Additional Notes
