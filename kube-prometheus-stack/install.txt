@@ -1,0 +1,28 @@
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+helm install monitoring prometheus-community/kube-prometheus-stack -n monitoring -f prometheus-stack-values.yml --create-namespace
+
+kubectl port-forward svc/prometheus-operated 9090:9090 -n monitoring --address 0.0.0.0
+kubectl port-forward service/monitoring-grafana -n monitoring 8080:80 --address 0.0.0.0
+kubectl port-forward service/alertmanager-operated -n monitoring 9093:9093 --address 0.0.0.0
+
+# grafana password is "prom-operator"
+# add smtp settings in alertmangerconfig.yml
+
+kubectl apply -f email-secrets.yml # add gmail app password in base64 encoded format
+kubectl apply -f alertmangerconfig.yml
+kubectl apply -f alerts.yml
+kubectl apply -f serviceMonitor.yml
+
+# test pod
+kubectl run test-pod --image=ubuntu:latest --restart=Never -- sleep infinity
+ #inside pod - stress-ng --cpu 4 --timeout 3000s
+
+# test deployment
+kubectl create deployment test-deployment --image=ubuntu:latest -- /bin/bash -c "sleep infinity"
+
+# restart
+kubectl rollout restart deployment/test-deployment
+
+
+

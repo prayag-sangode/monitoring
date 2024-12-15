@@ -1,0 +1,35 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: main-rules-alert-config
+  namespace: monitoring
+  labels:
+    release: monitoring
+spec:
+  route:
+    repeatInterval: 30m
+    receiver: 'null'
+    routes:
+    - matchers:
+      - name: alertname
+        value: HighCpuUsage
+      receiver: 'send-email'
+    - matchers:
+      - name: alertname
+        value: PodRestart
+      receiver: 'send-email'
+      repeatInterval: 5m
+  receivers:
+  - name: 'send-email'
+    emailConfigs:
+    - to: prayag.rhce@gmail.com
+      from: prayag.rhce@gmail.com
+      sendResolved: false
+
+      smarthost: smtp.gmail.com:587
+      authUsername: prayag.rhce@gmail.com
+      authIdentity: prayag.rhce@gmail.com
+      authPassword:
+        name: mail-pass
+        key: gmail-pass
+  - name: 'null'
