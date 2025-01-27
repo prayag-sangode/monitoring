@@ -1,0 +1,25 @@
+master:
+  persistence:
+    enabled: false
+
+replica:
+  persistence:
+    enabled: false
+
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    port: http-metrics
+    namespace: "monitoring"  # Namespace where Prometheus is running
+    interval: 30s
+    scrapeTimeout: "10s"
+    relabelings: []
+    metricRelabelings: []
+    honorLabels: true
+    additionalLabels:
+      release: kube-prometheus-stack
+    podTargetLabels: []
+    sampleLimit: false
+    targetLimit: false
+    additionalEndpoints: []
