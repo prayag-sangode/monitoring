@@ -144,3 +144,12 @@ Import the Redis Grafana dashboard from the Grafana website:
 ### 7. Access Redis Metrics in Grafana
 
 Once the dashboard is imported, you can view Redis metrics in Grafana by selecting the relevant panels to monitor Redis performance and health.
+
+# Redis Cluster Monitoring with Prometheus and Grafana
+
+**Author**: Prayag Sangode  
+📧 Email: [prayag.rhce@gmail.com](mailto:prayag.rhce@gmail.com)  
+🔗 LinkedIn: [https://www.linkedin.com/in/prayag-sangode-41737318/](https://www.linkedin.com/in/prayag-sangode-41737318/)  
+
+
+
