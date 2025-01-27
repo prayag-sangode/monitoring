@@ -1,0 +1,22 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: redis-cluster-monitor
+  namespace: monitoring
+  labels:
+    release: kube-prometheus-stack  # Matches the Prometheus release label
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: metrics
+      app.kubernetes.io/instance: redis-cluster
+      app.kubernetes.io/name: redis
+  namespaceSelector:
+    matchNames:
+    - redis-cluster
+  endpoints:
+  - port: http-metrics
+    path: /metrics
+    interval: 30s
+    scheme: http
+    
