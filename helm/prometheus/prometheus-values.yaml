@@ -1,0 +1,171 @@
+configmapReload:
+  prometheus:
+    enabled: true
+
+server:
+  name: server
+
+  persistentVolume:
+    enabled: true
+    statefulSetNameOverride: ""
+    accessModes:
+      - ReadWriteOnce
+    existingClaim: ""
+    mountPath: /data
+    size: 8Gi
+    storageClass: "standard"
+
+  service:
+    enabled: true
+    type: LoadBalancer
+
+serverFiles:
+  alerting_rules.yml:
+    groups:
+      - name: test
+        rules:
+          - alert: TestAlert
+            expr: vector(1)
+            for: 1m
+            labels:
+              severity: critical
+            annotations:
+              summary: "Test alert is firing."
+              description: "This is a test alert."
+
+      - name: kubernetes-pods
+        rules:
+          - alert: PodNotRunningInDefault
+            expr: kube_pod_status_phase{namespace="default", phase=~"Pending|Failed|Unknown"} > 0
+            for: 2m
+            labels:
+              severity: warning
+            annotations:
+              summary: "Pod not running in default namespace"
+              description: "One or more pods in the default namespace are not in the Running state."
+
+
+          - alert: ContainerCreatingFor5Minutes
+            expr: |
+              max by (namespace, pod) (
+                kube_pod_status_phase{phase!="Running"}
+              ) > 0
+            for: 5m
+            labels:
+              severity: critical
+            annotations:
+              summary: "Pod '{{ $labels.pod }}' in namespace '{{ $labels.namespace }}' is in a non-'Running' state for more than 5 minutes."
+              description: "The pod '{{ $labels.pod }}' in namespace '{{ $labels.namespace }}' has been in a non-'Running' state for more than 5 minutes."
+
+
+          - alert: PodCPUThrottlingDetected
+            expr: sum(rate(container_cpu_cfs_throttled_seconds_total{}[5m])) by (pod) > 0
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: "CPU Throttling detected for Pod {{ $labels.pod }}"
+              description: |
+                Pod {{ $labels.pod }} is experiencing CPU throttling.
+                This means the container(s) are hitting their CPU limits, and the kernel is restricting their CPU usage (throttling occurs when a container tries to use more CPU than it is allowed).
+
+          - alert: CPUThrottlingRatioHigh
+            expr: |
+              sum(rate(container_cpu_usage_seconds_total{container!=""}[5m])) by (pod)
+              / 
+              sum(kube_pod_container_resource_requests_cpu_cores) by (pod) > 0.9
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: "High CPU usage to request ratio detected for pod {{ $labels.pod }}"
+              description: |
+                The CPU usage is more than 90% of the requested CPU for pod {{ $labels.pod }}.
+                This indicates that the pod may require more CPU resources than requested, potentially leading to throttling or degraded performance.
+
+
+          - alert: HighCPUUsageTopKPods
+            expr: topk(10, sum(rate(container_cpu_usage_seconds_total{container!=""}[5m])) by (pod))
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: "High CPU usage - Top 10 pods"
+              description: |
+                The following are the top 10 pods consuming the most CPU over the last 5 minutes.
+                Investigate if any pod is unexpectedly using high CPU resources.
+
+          - alert: ClusterHighCPUUtilization
+            expr: sum(rate(container_cpu_usage_seconds_total{container!=""}[5m])) / sum(machine_cpu_cores) * 100 > 85
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: "High CPU usage detected across the cluster"
+              description: |
+                Cluster CPU utilization is over 85% for more than 5 minutes.
+                Current value: {{ $value | printf "%.2f" }}%
+
+          - alert: HighMemoryUsage
+            expr: sum by (pod) (container_memory_working_set_bytes{namespace="default"}) > 500 * 1024 * 1024  # 500Mi threshold (adjust as needed)
+            for: 2m
+            labels:
+              severity: warning
+            annotations:
+              summary: High memory usage detected in pod {{ $labels.pod }}
+              description: |
+                Pod {{ $labels.pod }} in the 'default' namespace is using more than 500Mi of memory.
+
+          - alert: MemoryUtilizationTooHigh
+            expr: |
+              100 * (
+                sum(container_memory_working_set_bytes{namespace="default", pod!=""}) by (pod)
+                /
+                sum(kube_pod_container_resource_limits{namespace="default", resource="memory", pod!=""}) by (pod)
+              ) > 80  # utilization % threshold
+            for: 2m
+            labels:
+              severity: critical
+            annotations:
+              summary: Memory usage >80% of limit for pod {{ $labels.pod }}
+              description: |
+                Pod {{ $labels.pod }} in the 'default' namespace is consuming more than 80% of its memory limit.
+
+
+alertmanager:
+  enabled: true
+  persistence:
+    size: 2Gi
+  service:
+    type: LoadBalancer  # Or NodePort if needed
+    port: 9093
+
+  config:
+    global:
+      smtp_smarthost: 'smtp.gmail.com:587'
+      smtp_from: 'prayag.rhce@gmail.com'
+      smtp_auth_username: 'prayag.rhce@gmail.com'
+      smtp_auth_password: 'asyb nguh bklh mzys'  # You can replace this with a secret if desired
+
+    route:
+      group_by: ['alertname']
+      receiver: 'email-alert'
+      group_wait: 10s
+      group_interval: 5m
+      repeat_interval: 10m
+      #repeat_interval: 3h
+
+    receivers:
+      - name: 'email-alert'
+        email_configs:
+          - to: 'prayag.rhce@gmail.com'
+            send_resolved: true
+
+kube-state-metrics:
+  enabled: true
+
+prometheus-node-exporter:
+  enabled: true
+
+prometheus-pushgateway:
+  enabled: true
