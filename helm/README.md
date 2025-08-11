@@ -52,7 +52,7 @@ helm repo update
 
 ---
 
-## 5️⃣ Deploy Monitoring Components
+## Deploy Monitoring Components
 
 ### **Prometheus**
 
