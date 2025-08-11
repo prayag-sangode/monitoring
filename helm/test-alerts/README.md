@@ -130,7 +130,7 @@ kubectl delete deployment nginx-stress -n default
 
 ---
 
-## ⏱ Notes
+## Notes
 
 * The `for:` value in alert rules means alerts will **only fire after being in the warning state for that duration** (e.g., 2–5 minutes).
 * Check alerts in:
