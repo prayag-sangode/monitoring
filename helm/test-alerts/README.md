@@ -1,4 +1,4 @@
-# Testing Prometheus Alerts in Kubernetes (Single Deployment)
+# Testing Prometheus Alerts in Kubernetes 
 
 This guide demonstrates how to test **Pod Down**, **High CPU**, **High Memory**, and **Cluster-Wide High CPU Utilization** alerts using a **single Kubernetes deployment**.
 We’ll use an `nginx` pod with **low CPU & memory limits**, so it’s easy to trigger resource-based alerts.
@@ -47,7 +47,7 @@ kubectl get pods -n default -l app=nginx-stress
 
 ---
 
-## 2️⃣ Test **Pod Down** Alert
+## Test **Pod Down** Alert
 
 ### Option A – Scale to 0
 
@@ -70,7 +70,7 @@ The pod should move into `ImagePullBackOff` or `ErrImagePull` state.
 
 ---
 
-## 3️⃣ Test **High CPU Usage** Alert
+##  Test **High CPU Usage** Alert
 
 ```bash
 kubectl exec -it deployment.apps/nginx-stress -- /bin/bash
@@ -86,7 +86,7 @@ stress-ng --cpu 1 --cpu-load 100 --timeout 600s
 
 ---
 
-## 4️⃣ Test **High Memory Usage** Alert
+##  Test **High Memory Usage** Alert
 
 ```bash
 kubectl exec -it deployment.apps/nginx-stress -- /bin/bash
@@ -101,7 +101,7 @@ stress-ng --vm 1 --vm-bytes 240M --vm-hang 0 --timeout 600s
 
 ---
 
-## 5️⃣ Test **Cluster-Wide High CPU Utilization** Alert
+##  Test **Cluster-Wide High CPU Utilization** Alert
 
 To simulate high CPU usage across the cluster:
 
@@ -122,7 +122,7 @@ done
 
 ---
 
-## 6️⃣ Cleanup
+## Cleanup
 
 ```bash
 kubectl delete deployment nginx-stress -n default
